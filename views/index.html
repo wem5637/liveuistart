@@ -103,9 +103,8 @@
       $('#hotel-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
       let geo = places[hotels[selectedId].placeId].location
       let myLatLng = {lat: geo[0], lng: geo[1]}
-      console.log("myLatLng", myLatLng)
       let map = new google.maps.Map(document.getElementById('map-canvas'), {
-        zoom: 13,
+        zoom: 17,
         center: myLatLng
       })
       var marker = new google.maps.Marker({
@@ -115,11 +114,12 @@
     })
     $('#restaurant-choices:nth-child(2)').next().on('click', function() {
       let selected = $('#restaurant-choices option:selected').text()
-      console.log("selected", selected)
+      let selectedId = $('#restaurant-choices').val()
       $('#restaurant-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
-      let myLatLng = {lat: 41.8884073, lng: -87.6293817}
+      let geo = places[restaurants[selectedId].placeId].location
+      let myLatLng = {lat: geo[0], lng: geo[1]}
       let map = new google.maps.Map(document.getElementById('map-canvas'), {
-        zoom: 13,
+        zoom: 17,
         center: myLatLng
       })
       var marker = new google.maps.Marker({
@@ -129,8 +129,18 @@
     })
     $('#activity-choices:nth-child(2)').next().on('click', function() {
       let selected = $('#activity-choices option:selected').text()
-      console.log("selected", selected)
+      let selectedId = $('#activities-choices').val()
       $('#activity-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
+      let geo = places[activities[selectedId].placeId].location
+      let myLatLng = {lat: geo[0], lng: geo[1]}
+      let map = new google.maps.Map(document.getElementById('map-canvas'), {
+        zoom: 17,
+        center: myLatLng
+      })
+      var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map
+      })
     })
   })
 </script>
