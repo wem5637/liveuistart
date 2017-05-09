@@ -16,24 +16,18 @@
           <div>
             <h4>Hotels</h4>
             <select data-type="hotel" id="hotel-choices">
-              <option>Wyndham Grand Chicago Riverfront</option>
-              <option>...</option>
             </select>
             <button data-action="add" class="btn btn-primary btn-circle pull-right">+</button>
           </div>
           <div>
             <h4>Restaurants</h4>
             <select data-type="restaurant" id="restaurant-choices">
-              <option>Alinea</option>
-              <option>...</option>
             </select>
             <button data-action="add" class="btn btn-primary btn-circle pull-right">+</button>
           </div>
           <div>
             <h4>Activities</h4>
             <select data-type="activity" id="activity-choices">
-              <option>Shedd Aquarium</option>
-              <option>...</option>
             </select>
             <button data-action="add" class="btn btn-primary btn-circle pull-right">+</button>
           </div>
@@ -51,8 +45,8 @@
         <div class="panel-heading">
           <div class="day-buttons">
             <button class="btn btn-circle day-btn">1</button>
-            <button class="btn btn-circle day-btn current-day">2</button>
-            <button class="btn btn-circle day-btn">3</button>
+            <!--<button class="btn btn-circle day-btn current-day">2</button>-->
+            <!--<button class="btn btn-circle day-btn">3</button>-->
             <button class="btn btn-circle day-btn" id="day-add">+</button>
           </div>
         </div>
@@ -60,27 +54,21 @@
           <div>
             <h4>My Hotel</h4>
             <ul class="list-group">
-              <div class="itinerary-item">
-                <span class="title">Wyndham Grand Chicago Riverfront</span>
-                <button class="btn btn-xs btn-danger remove btn-circle">x</button>
+              <div id="hotel-itinerary" class="itinerary-item">
               </div>
             </ul>
           </div>
           <div>
             <h4>My Restaurants</h4>
             <ul class="list-group">
-              <div class="itinerary-item">
-                <span class="title">Alinea</span>
-                <button class="btn btn-xs btn-danger remove btn-circle">x</button>
+              <div id="restaurant-itinerary" class="itinerary-item">
               </div>
             </ul>
           </div>
           <div>
             <h4>My Activities</h4>
             <ul class="list-group">
-              <div class="itinerary-item">
-                <span class="title">Shedd Aquarium</span>
-                <button class="btn btn-xs btn-danger remove btn-circle">x</button>
+              <div id="activity-itinerary" class="itinerary-item">
               </div>
             </ul>
           </div>
@@ -89,4 +77,61 @@
     </div>
   </div>
 </div>
+<script>
+  var hotels = {{ hotels | dump | safe }};
+  var restaurants = {{ restaurants | dump | safe }};
+  var activities = {{ activities | dump | safe }};
+  var places = {{ places | dump | safe }};
+  $(document).ready(function() {
+    console.log("hotels", hotels)
+    // console.log("places", places)
+    hotels.forEach(hotel => {
+      let option = $('<option value="' + hotel.id + '">' + hotel.name + '</option>')
+      $('#hotel-choices').append(option)
+    })
+    restaurants.forEach(restaurant => {
+      let option = $('<option value="' + restaurant.id + '">' + restaurant.name + '</option>')
+      $('#restaurant-choices').append(option)
+    })
+    activities.forEach(activity => {
+      let option = $('<option value="' + activity.id + '">' + activity.name + '</option>')
+      $('#activity-choices').append(option)
+    })
+    $('#hotel-choices:nth-child(2)').next().on('click', function() {
+      let selected = $('#hotel-choices option:selected').text()
+      let selectedId = $('#hotel-choices').val()
+      $('#hotel-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
+      let geo = places[hotels[selectedId].placeId].location
+      let myLatLng = {lat: geo[0], lng: geo[1]}
+      console.log("myLatLng", myLatLng)
+      let map = new google.maps.Map(document.getElementById('map-canvas'), {
+        zoom: 13,
+        center: myLatLng
+      })
+      var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map
+      })
+    })
+    $('#restaurant-choices:nth-child(2)').next().on('click', function() {
+      let selected = $('#restaurant-choices option:selected').text()
+      console.log("selected", selected)
+      $('#restaurant-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
+      let myLatLng = {lat: 41.8884073, lng: -87.6293817}
+      let map = new google.maps.Map(document.getElementById('map-canvas'), {
+        zoom: 13,
+        center: myLatLng
+      })
+      var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map
+      })
+    })
+    $('#activity-choices:nth-child(2)').next().on('click', function() {
+      let selected = $('#activity-choices option:selected').text()
+      console.log("selected", selected)
+      $('#activity-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
+    })
+  })
+</script>
 {% endblock %}

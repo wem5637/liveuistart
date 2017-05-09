@@ -56,8 +56,8 @@ $(function initializeMap (){
     marker.setMap(currentMap);
   }
 
-    drawMarker('hotel', [41.8884073, -87.6293817]);
-    drawMarker('restaurant', [41.9134555, -87.6503527]);
-    drawMarker('activity', [41.8675766, -87.6162267])
+    // drawMarker('hotel', [41.8884073, -87.6293817]);
+    // drawMarker('restaurant', [41.9134555, -87.6503527]);
+    // drawMarker('activity', [41.8675766, -87.6162267])
 
 });

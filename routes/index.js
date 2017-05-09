@@ -20,16 +20,20 @@ router.get('/', function(req, res, next) {
     include: [Place]
   });
 
+  var findingPlaces = Place.findAll();
+
   Promise.all([
     findingHotels,
     findingActivities,
-    findingRestaurants
+    findingRestaurants,
+    findingPlaces
   ])
-  .spread(function(hotels, activities, restaurants) {
+  .spread(function(hotels, activities, restaurants, places) {
     res.render('index', {
       hotels: hotels,
       activities: activities,
-      restaurants: restaurants
+      restaurants: restaurants,
+      places: places
     });
   })
   .catch(next);
