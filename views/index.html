@@ -83,7 +83,7 @@
   var activities = {{ activities | dump | safe }};
   var places = {{ places | dump | safe }};
   $(document).ready(function() {
-    console.log("hotels", hotels)
+    // console.log("hotels", hotels)
     // console.log("places", places)
     hotels.forEach(hotel => {
       let option = $('<option value="' + hotel.id + '">' + hotel.name + '</option>')
@@ -97,51 +97,57 @@
       let option = $('<option value="' + activity.id + '">' + activity.name + '</option>')
       $('#activity-choices').append(option)
     })
-    $('#hotel-choices:nth-child(2)').next().on('click', function() {
-      let selected = $('#hotel-choices option:selected').text()
-      let selectedId = $('#hotel-choices').val()
-      $('#hotel-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
-      let geo = places[hotels[selectedId].placeId].location
-      let myLatLng = {lat: geo[0], lng: geo[1]}
-      let map = new google.maps.Map(document.getElementById('map-canvas'), {
-        zoom: 17,
-        center: myLatLng
-      })
-      var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map
-      })
-    })
-    $('#restaurant-choices:nth-child(2)').next().on('click', function() {
-      let selected = $('#restaurant-choices option:selected').text()
-      let selectedId = $('#restaurant-choices').val()
-      $('#restaurant-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
-      let geo = places[restaurants[selectedId].placeId].location
-      let myLatLng = {lat: geo[0], lng: geo[1]}
-      let map = new google.maps.Map(document.getElementById('map-canvas'), {
-        zoom: 17,
-        center: myLatLng
-      })
-      var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map
-      })
-    })
-    $('#activity-choices:nth-child(2)').next().on('click', function() {
-      let selected = $('#activity-choices option:selected').text()
-      let selectedId = $('#activities-choices').val()
-      $('#activity-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
-      let geo = places[activities[selectedId].placeId].location
-      let myLatLng = {lat: geo[0], lng: geo[1]}
-      let map = new google.maps.Map(document.getElementById('map-canvas'), {
-        zoom: 17,
-        center: myLatLng
-      })
-      var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map
-      })
-    })
+    var placeArray = [];
+
+    var onBtnClick = function(placeName) {
+
+        $('#' + placeName + '-choices:nth-child(2)').next().on('click', function() {
+                var plural;
+                if (placeName === "activity") {
+                    plural = activities;
+                } else if(placeName === "hotel"){
+                    plural = hotels;
+                } else if(placeName === "restaurant"){
+                    plural = restaurants;
+                }
+                  let selected = $('#' + placeName + '-choices option:selected').text()
+                  let selectedId = $('#' + placeName + '-choices').val()
+                  console.log("object.values", Object.values(placeArray));
+                if(Object.values(placeArray).indexOf(places[plural[selectedId].placeId].id)<0){
+                  $('#' + placeName + '-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
+                  $('.btn.btn-xs.btn-danger.remove.btn-circle').on('click', function(){
+                    $(event.target).prev().remove();
+                    $(event.target).remove();
+                  })
+
+
+                  placeArray.push({id: places[plural[selectedId].placeId].id ,place: places[plural[selectedId].placeId]});
+                  console.log("placeArray", placeArray);               
+                  let geo = places[plural[selectedId].placeId].location
+                  let myLatLng = {
+                      lat: geo[0],
+                      lng: geo[1]
+                  }
+
+
+
+                  let map = new google.maps.Map(document.getElementById('map-canvas'), {
+                      zoom: 17,
+                      center: myLatLng
+                  })
+                  var marker = new google.maps.Marker({
+                      position: myLatLng,
+                      map: map
+                  })
+              }
+            })
+
+        }
+
+      onBtnClick("activity");
+      onBtnClick("hotel");
+      onBtnClick("restaurant");
+
   })
 </script>
 {% endblock %}
