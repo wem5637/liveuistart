@@ -41,12 +41,12 @@
           <button class="btn btn-xs btn-danger remove btn-circle">x</button>
         </span>
       </h3>
-      <div class="panel panel-default">
+      <div class="panel panel-default" id="itinerary-parent">
         <div class="panel-heading">
           <div class="day-buttons">
             <button class="btn btn-circle day-btn">1</button>
-            <!--<button class="btn btn-circle day-btn current-day">2</button>-->
-            <!--<button class="btn btn-circle day-btn">3</button>-->
+            <!--  <button class="btn btn-circle day-btn current-day">2</button> -->
+            <!--<button class="btn btn-circle day-btn">3</button> -->
             <button class="btn btn-circle day-btn" id="day-add">+</button>
           </div>
         </div>
@@ -99,6 +99,18 @@
     })
     var placeArray = [];
 
+
+
+    $('#day-add').on('click' ,function(){
+      var btnNum = $('.day-buttons .btn').length;
+      $('.day-buttons').append('<button class="btn btn-circle day-btn" id='+btnNum+'>'+btnNum+'</button>')
+      $('#day-add').insertAfter("#"+btnNum+"")
+      $('#itinerary').clone().attr("id", "TESTID").appendTo("#itinerary-parent")
+    })
+
+
+
+
     var onBtnClick = function(placeName) {
 
         $('#' + placeName + '-choices:nth-child(2)').next().on('click', function() {
@@ -112,8 +124,18 @@
                 }
                   let selected = $('#' + placeName + '-choices option:selected').text()
                   let selectedId = $('#' + placeName + '-choices').val()
-                  console.log("object.values", Object.values(placeArray));
-                if(Object.values(placeArray).indexOf(places[plural[selectedId].placeId].id)<0){
+
+                  
+                  var addItemId = places[plural[selectedId].placeId].id;
+                  var addItem = places[plural[selectedId].placeId];
+
+                  var repeats = placeArray.filter(function(elem){
+
+                    return elem.id===addItemId;
+                  })
+                  console.log("repeats", repeats);
+                if(!repeats.length){
+
                   $('#' + placeName + '-itinerary').append('<span class="title">' + selected + '</span><button class="btn btn-xs btn-danger remove btn-circle">x</button>')
                   $('.btn.btn-xs.btn-danger.remove.btn-circle').on('click', function(){
                     $(event.target).prev().remove();
@@ -121,7 +143,7 @@
                   })
 
 
-                  placeArray.push({id: places[plural[selectedId].placeId].id ,place: places[plural[selectedId].placeId]});
+                  placeArray.push({id: addItemId ,place: addItem});
                   console.log("placeArray", placeArray);               
                   let geo = places[plural[selectedId].placeId].location
                   let myLatLng = {
